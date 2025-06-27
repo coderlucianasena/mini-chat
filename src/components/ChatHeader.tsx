@@ -1,10 +1,9 @@
 
 import React from 'react';
-import { Bell, BellOff, Moon, Sun, Settings } from 'lucide-react';
+import { Moon, Sun, Settings, Volume2, VolumeX } from 'lucide-react';
 import { Switch } from './ui/switch';
-import { useNotifications } from '../hooks/useNotifications';
 import { useTheme } from '../hooks/useTheme';
-import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useSoundSettings } from '../hooks/useSoundSettings';
 
 interface ChatHeaderProps {
   userName: string;
@@ -12,16 +11,8 @@ interface ChatHeaderProps {
 }
 
 const ChatHeader = ({ userName, onNameChange }: ChatHeaderProps) => {
-  const { permission, isSupported } = useNotifications();
   const { theme, toggleTheme, isDark } = useTheme();
-  const [notificationsEnabled, setNotificationsEnabled] = useLocalStorage<boolean>('notifications-enabled', true);
-
-  const handleNotificationToggle = (enabled: boolean) => {
-    setNotificationsEnabled(enabled);
-    if (enabled && permission === 'default') {
-      Notification.requestPermission();
-    }
-  };
+  const { soundEnabled, toggleSound } = useSoundSettings();
 
   return (
     <div className="bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-600 dark:to-indigo-700 px-6 py-4">
@@ -44,21 +35,19 @@ const ChatHeader = ({ userName, onNameChange }: ChatHeaderProps) => {
         </div>
 
         <div className="flex items-center gap-4">
-          {/* Toggle de Notificações */}
-          {isSupported && (
-            <div className="flex items-center gap-2">
-              {notificationsEnabled && permission === 'granted' ? (
-                <Bell size={16} className="text-white" />
-              ) : (
-                <BellOff size={16} className="text-white" />
-              )}
-              <Switch
-                checked={notificationsEnabled}
-                onCheckedChange={handleNotificationToggle}
-                className="data-[state=checked]:bg-white/30 data-[state=unchecked]:bg-white/10"
-              />
-            </div>
-          )}
+          {/* Toggle de Som */}
+          <div className="flex items-center gap-2">
+            {soundEnabled ? (
+              <Volume2 size={16} className="text-white" />
+            ) : (
+              <VolumeX size={16} className="text-white" />
+            )}
+            <Switch
+              checked={soundEnabled}
+              onCheckedChange={toggleSound}
+              className="data-[state=checked]:bg-white/30 data-[state=unchecked]:bg-white/10"
+            />
+          </div>
 
           {/* Toggle Dark/Light Mode */}
           <button
