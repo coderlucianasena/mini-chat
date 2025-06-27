@@ -2,7 +2,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { getMessages, postMessage, ApiMessage, NewMessage } from '../services/mockApi';
 import { MessageType } from '../components/ChatApp';
-import { useLocalStorage } from './useLocalStorage';
 import { useNotifications } from './useNotifications';
 
 // Função para converter ApiMessage para MessageType
@@ -15,8 +14,7 @@ const convertApiMessageToMessageType = (apiMessage: ApiMessage): MessageType => 
 });
 
 export const useMessages = () => {
-  // Usar localStorage para persistir mensagens
-  const [messages, setMessages] = useLocalStorage<MessageType[]>('chat-messages', []);
+  const [messages, setMessages] = useState<MessageType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasLoadedInitialMessages, setHasLoadedInitialMessages] = useState(false);
   const [typingUser, setTypingUser] = useState<string | null>(null);
@@ -28,20 +26,16 @@ export const useMessages = () => {
 
   const { notifyNewMessage } = useNotifications();
 
-  // Carrega mensagens iniciais apenas se não houver mensagens no localStorage
+  // Carrega mensagens iniciais sempre que a aplicação inicia
   useEffect(() => {
     const loadMessages = async () => {
-      // Se já há mensagens no localStorage, não carregar as iniciais
-      if (messages.length > 0) {
-        setHasLoadedInitialMessages(true);
-        return;
-      }
-
       setIsLoading(true);
       try {
+        // Sempre carregar as mensagens iniciais do mock API
         const apiMessages = await getMessages();
         const convertedMessages = apiMessages.map(convertApiMessageToMessageType);
         setMessages(convertedMessages);
+        console.log('Mensagens iniciais carregadas:', convertedMessages);
       } catch (error) {
         console.error('Erro ao carregar mensagens:', error);
       } finally {
@@ -53,7 +47,7 @@ export const useMessages = () => {
     if (!hasLoadedInitialMessages) {
       loadMessages();
     }
-  }, [hasLoadedInitialMessages, messages.length, setMessages]);
+  }, [hasLoadedInitialMessages]);
 
   // Simula chegada de novas mensagens a cada 5 segundos
   useEffect(() => {
@@ -111,7 +105,7 @@ export const useMessages = () => {
       }
       console.log('Limpando interval da simulação');
     };
-  }, [hasLoadedInitialMessages, notifyNewMessage, setMessages]);
+  }, [hasLoadedInitialMessages, notifyNewMessage]);
 
   const sendMessage = async (text: string) => {
     setIsLoading(true);
