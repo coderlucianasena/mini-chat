@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { getMessages, postMessage, ApiMessage, NewMessage } from '../services/mockApi';
 import { MessageType } from '../components/ChatApp';
@@ -33,14 +32,28 @@ export const useMessages = (userName?: string) => {
     { id: 3, author: "João", text: "Tudo ótimo! E com você?" }
   ];
 
-  // Lista de mensagens que serão enviadas sequencialmente após as iniciais
+  // Lista expandida de mensagens que serão enviadas sequencialmente após as iniciais
   const simulatedMessages = [
     { author: "Ana", text: "Que legal esse chat!" },
     { author: "Carlos", text: "Oi pessoal! Como vocês estão?" },
-    { author: "Maria", text: "Tudo bem por aqui!" },
-    { author: "João", text: "Que bom ver todos aqui!" },
-    { author: "Ana", text: "Vamos conversar mais!" },
-    { author: "Carlos", text: "Adorei a interface!" }
+    { author: "Maria", text: "Tudo bem por aqui! Acabei de chegar do trabalho." },
+    { author: "João", text: "Que bom ver todos aqui! Como foi o dia de vocês?" },
+    { author: "Ana", text: "Meu dia foi corrido, mas consegui terminar um projeto importante!" },
+    { author: "Carlos", text: "Parabéns, Ana! Aqui também foi bem produtivo." },
+    { author: "Maria", text: "Que ótimo! Gosto quando todos estão bem." },
+    { author: "João", text: "Verdade! E esse chat está funcionando perfeitamente." },
+    { author: "Ana", text: "A interface está muito bonita! Quem desenvolveu?" },
+    { author: "Carlos", text: "Realmente, está bem intuitivo de usar." },
+    { author: "Maria", text: "Adorei os emojis e as cores diferentes para cada pessoa." },
+    { author: "João", text: "E o indicador de digitação é muito útil!" },
+    { author: "Ana", text: "Sim! Dá para saber quando alguém está escrevendo." },
+    { author: "Carlos", text: "Pessoal, vamos marcar um encontro presencial em breve?" },
+    { author: "Maria", text: "Boa ideia! Faz tempo que não nos vemos pessoalmente." },
+    { author: "João", text: "Eu topo! Que tal no próximo fim de semana?" },
+    { author: "Ana", text: "Perfeito! Vou verificar minha agenda." },
+    { author: "Carlos", text: "Ótimo! Vou criar um grupo para organizarmos." },
+    { author: "Maria", text: "Mal posso esperar para nos encontrarmos!" },
+    { author: "João", text: "Será uma ótima oportunidade para conversarmos mais." }
   ];
 
   // Função para limpar timeouts
