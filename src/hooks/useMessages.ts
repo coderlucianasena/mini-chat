@@ -51,55 +51,52 @@ export const useMessages = () => {
     }
   }, [messages.length, hasLoadedInitialMessages, setMessages]);
 
-  // Simula chegada de novas mensagens a cada 10 segundos com indicador de digitação
+  // Simula chegada de novas mensagens a cada 5 segundos com indicador de digitação
   useEffect(() => {
     // Só inicia simulação após carregar mensagens iniciais
     if (!hasLoadedInitialMessages) return;
 
+    // Lista de mensagens simuladas que será repetida em loop
     const simulatedMessages = [
-      { author: "Ana Clara", text: "Que legal esse chat!" },
+      { author: "Ana", text: "Que legal esse chat!" },
       { author: "Pedro", text: "Estou gostando da interface!" },
       { author: "Carlos", text: "Como vocês estão hoje?" },
-      { author: "Ana Clara", text: "Estou bem! E vocês?" },
+      { author: "Ana", text: "Estou bem! E vocês?" },
       { author: "Lucia", text: "Esse chat está funcionando bem!" },
       { author: "Pedro", text: "Concordo, muito bom mesmo!" },
       { author: "Roberto", text: "Boa tarde pessoal! 🌅" },
       { author: "Fernanda", text: "Alguém sabe que horas são?" },
       { author: "Carlos", text: "São 15:30 aqui!" },
-      { author: "Diego", text: "Adorei o design deste chat!" },
-      { author: "Lucia", text: "Também gostei muito!" },
-      { author: "Camila", text: "Vamos conversar mais! 💬" },
-      { author: "Roberto", text: "Claro! Sempre bom bater papo" },
-      { author: "Ana Clara", text: "Que bom ter vocês aqui!" }
+      { author: "Diego", text: "Adorei o design deste chat!" }
     ];
 
     let messageIndex = 0;
 
     const interval = setInterval(async () => {
-      if (messageIndex < simulatedMessages.length) {
-        const messageToAdd = simulatedMessages[messageIndex];
-        
-        // Mostrar indicador de digitação por 2 segundos
-        setTypingUser(messageToAdd.author);
-        
-        setTimeout(async () => {
-          try {
-            const newApiMessage = await postMessage(messageToAdd);
-            const newMessage = convertApiMessageToMessageType(newApiMessage);
-            
-            // Notificar sobre nova mensagem recebida
-            notifyNewMessage(newMessage.senderName, newMessage.text);
-            
-            setMessages(prev => [...prev, newMessage]);
-            setTypingUser(null); // Remover indicador de digitação
-            messageIndex++;
-          } catch (error) {
-            console.error('Erro ao adicionar mensagem simulada:', error);
-            setTypingUser(null);
-          }
-        }, 2000); // 2 segundos de digitação
-      }
-    }, 10000); // A cada 10 segundos
+      const messageToAdd = simulatedMessages[messageIndex];
+      
+      // Mostrar indicador de digitação por 2 segundos
+      setTypingUser(messageToAdd.author);
+      
+      setTimeout(async () => {
+        try {
+          const newApiMessage = await postMessage(messageToAdd);
+          const newMessage = convertApiMessageToMessageType(newApiMessage);
+          
+          // Notificar sobre nova mensagem recebida
+          notifyNewMessage(newMessage.senderName, newMessage.text);
+          
+          setMessages(prev => [...prev, newMessage]);
+          setTypingUser(null); // Remover indicador de digitação
+          
+          // Avançar para próxima mensagem, voltando ao início quando chegar ao fim
+          messageIndex = (messageIndex + 1) % simulatedMessages.length;
+        } catch (error) {
+          console.error('Erro ao adicionar mensagem simulada:', error);
+          setTypingUser(null);
+        }
+      }, 2000); // 2 segundos de digitação
+    }, 5000); // A cada 5 segundos conforme especificação
 
     return () => clearInterval(interval);
   }, [hasLoadedInitialMessages, setMessages, notifyNewMessage]);

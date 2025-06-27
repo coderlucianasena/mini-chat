@@ -10,7 +10,7 @@ export interface NewMessage {
   text: string;
 }
 
-// Estado simulado da "base de dados"
+// Estado simulado da "base de dados" - dados iniciais conforme especificação
 let messages: ApiMessage[] = [
   { id: 1, author: "João", text: "Olá, pessoal!" },
   { id: 2, author: "Maria", text: "Oi, João! Tudo bem?" },
