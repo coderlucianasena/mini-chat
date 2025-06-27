@@ -25,27 +25,27 @@ const ChatApp = () => {
   }, [messages]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center p-4">
       {/* Container do chat */}
-      <div className="flex-1 max-w-2xl mx-auto w-full p-4">
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 h-full flex flex-col overflow-hidden">
+      <div className="w-full max-w-md mx-auto">
+        <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 h-[600px] flex flex-col overflow-hidden">
           {/* Header do chat */}
-          <div className="bg-white border-b border-gray-100 px-4 py-3 flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+          <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-4 flex items-center gap-4">
+            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-white font-bold text-lg border-2 border-white/30">
               AC
             </div>
             <div>
-              <h2 className="font-semibold text-gray-900">Ana Clara</h2>
-              <p className="text-sm text-green-500">Online</p>
+              <h2 className="font-semibold text-white text-lg">Ana Clara</h2>
+              <p className="text-sm text-blue-100">Online</p>
             </div>
           </div>
 
           {/* Área de mensagens */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+          <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-gray-50/50 to-white/80">
             {messages.length === 0 ? (
               <div className="text-center text-gray-500 py-12">
                 <div className="text-4xl mb-4">💬</div>
-                <p>Nenhuma mensagem ainda. Seja o primeiro a conversar!</p>
+                <p className="text-gray-600">Nenhuma mensagem ainda. Seja o primeiro a conversar!</p>
               </div>
             ) : (
               <>
@@ -61,10 +61,10 @@ const ChatApp = () => {
           </div>
 
           {/* Input de mensagem */}
-          <div className="p-4 bg-white border-t border-gray-100">
+          <div className="p-6 bg-white/90 backdrop-blur-sm border-t border-gray-100/50">
             <MessageInput onSendMessage={sendMessage} disabled={isLoading} />
             {isLoading && (
-              <div className="flex items-center justify-center mt-2">
+              <div className="flex items-center justify-center mt-3">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
                 <span className="ml-2 text-sm text-gray-500">Enviando...</span>
               </div>
