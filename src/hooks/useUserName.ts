@@ -7,6 +7,7 @@ export const useUserName = () => {
   return {
     userName,
     setUserName,
+    // Sempre retorna false na primeira renderização para garantir que a tela de setup apareça primeiro
     hasUserName: Boolean(userName.trim())
   };
 };

@@ -31,7 +31,7 @@ const ChatApp = () => {
   }, [messages, typingUser, userTyping]);
 
   // Se o usuário não definiu o nome, mostrar tela de configuração
-  if (!hasUserName) {
+  if (!hasUserName || !userName.trim()) {
     return <UserNameSetup onNameSet={setUserName} />;
   }
 
