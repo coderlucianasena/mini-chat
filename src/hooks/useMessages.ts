@@ -21,8 +21,8 @@ export const useMessages = () => {
   const [hasLoadedInitialMessages, setHasLoadedInitialMessages] = useState(false);
   const [typingUser, setTypingUser] = useState<string | null>(null);
   
-  // Ref para controlar se a simulação já está rodando
-  const simulationRunningRef = useRef(false);
+  // Ref para controlar se a simulação já foi iniciada
+  const simulationInitialized = useRef(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const { notifyNewMessage } = useNotifications();
@@ -41,29 +41,28 @@ export const useMessages = () => {
         const apiMessages = await getMessages();
         const convertedMessages = apiMessages.map(convertApiMessageToMessageType);
         setMessages(convertedMessages);
-        setHasLoadedInitialMessages(true);
       } catch (error) {
         console.error('Erro ao carregar mensagens:', error);
-        setHasLoadedInitialMessages(true);
       } finally {
         setIsLoading(false);
+        setHasLoadedInitialMessages(true);
       }
     };
 
     if (!hasLoadedInitialMessages) {
       loadMessages();
     }
-  }, [messages.length, hasLoadedInitialMessages, setMessages]);
+  }, [hasLoadedInitialMessages]);
 
   // Simula chegada de novas mensagens - executa apenas uma vez
   useEffect(() => {
-    // Só inicia simulação após carregar mensagens iniciais e se não estiver rodando
-    if (!hasLoadedInitialMessages || simulationRunningRef.current) return;
+    // Só inicia simulação se não foi inicializada e as mensagens iniciais foram carregadas
+    if (simulationInitialized.current || !hasLoadedInitialMessages) return;
 
-    // Marcar que a simulação está rodando
-    simulationRunningRef.current = true;
+    // Marcar que a simulação foi inicializada
+    simulationInitialized.current = true;
 
-    // Sequência exata conforme especificação: João → Maria → João → Ana
+    // Sequência de mensagens
     const messageSequence = [
       { author: "João", text: "Olá, pessoal!" },
       { author: "Maria", text: "Oi, João! Tudo bem?" },
@@ -90,33 +89,27 @@ export const useMessages = () => {
           notifyNewMessage(newMessage.senderName, newMessage.text);
           
           setMessages(prev => [...prev, newMessage]);
-          setTypingUser(null); // Remover indicador de digitação
+          setTypingUser(null);
           
           // Avançar para próxima mensagem na sequência
           currentIndex = (currentIndex + 1) % messageSequence.length;
-          console.log('Próximo índice será:', currentIndex);
           
-          // Se voltou ao início (índice 0), log para confirmar o loop
-          if (currentIndex === 0) {
-            console.log('Voltando ao início da sequência');
-          }
         } catch (error) {
           console.error('Erro ao adicionar mensagem simulada:', error);
           setTypingUser(null);
         }
-      }, 2000); // 2 segundos de digitação
-    }, 5000); // A cada 5 segundos conforme especificação
+      }, 2000);
+    }, 5000);
 
-    // Cleanup function para limpar o interval
+    // Cleanup function
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
-      simulationRunningRef.current = false;
       console.log('Limpando interval da simulação');
     };
-  }, [hasLoadedInitialMessages, notifyNewMessage]); // Removido setMessages da dependência
+  }, [hasLoadedInitialMessages, notifyNewMessage]);
 
   const sendMessage = async (text: string) => {
     setIsLoading(true);

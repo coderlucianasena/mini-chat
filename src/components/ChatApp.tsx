@@ -4,7 +4,10 @@ import Message from './Message';
 import MessageInput from './MessageInput';
 import NotificationStatus from './NotificationStatus';
 import TypingIndicator from './TypingIndicator';
+import UserNameSetup from './UserNameSetup';
 import { useMessages } from '../hooks/useMessages';
+import { useUserName } from '../hooks/useUserName';
+import { Settings } from 'lucide-react';
 
 export interface MessageType {
   id: number;
@@ -16,6 +19,7 @@ export interface MessageType {
 
 const ChatApp = () => {
   const { messages, sendMessage, isLoading, typingUser } = useMessages();
+  const { userName, setUserName, hasUserName } = useUserName();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -26,6 +30,11 @@ const ChatApp = () => {
     scrollToBottom();
   }, [messages, typingUser]);
 
+  // Se o usuário não definiu o nome, mostrar tela de configuração
+  if (!hasUserName) {
+    return <UserNameSetup onNameSet={setUserName} />;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center p-4">
       {/* Container do chat */}
@@ -35,14 +44,23 @@ const ChatApp = () => {
           <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-white font-bold text-lg border-2 border-white/30">
-                AC
+                {userName.charAt(0).toUpperCase()}
               </div>
               <div>
-                <h2 className="font-semibold text-white text-lg">Ana Clara</h2>
+                <h2 className="font-semibold text-white text-lg">{userName}</h2>
                 <p className="text-sm text-blue-100">Online</p>
               </div>
             </div>
-            <NotificationStatus />
+            <div className="flex items-center gap-3">
+              <NotificationStatus />
+              <button
+                onClick={() => setUserName('')}
+                className="p-2 hover:bg-white/10 rounded-full transition-colors"
+                title="Alterar nome"
+              >
+                <Settings size={20} className="text-white" />
+              </button>
+            </div>
           </div>
 
           {/* Área de mensagens */}
