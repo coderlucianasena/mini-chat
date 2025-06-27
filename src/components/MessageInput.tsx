@@ -54,10 +54,6 @@ const MessageInput = ({ onSendMessage, disabled = false, userName, onTyping }: M
     }
   };
 
-  const placeholderText = userName 
-    ? `${userName} está digitando...` 
-    : "Digite sua mensagem...";
-
   return (
     <form onSubmit={handleSubmit} className="flex items-center gap-3">
       <div className="flex-1">
@@ -66,7 +62,7 @@ const MessageInput = ({ onSendMessage, disabled = false, userName, onTyping }: M
           value={inputText}
           onChange={handleInputChange}
           onKeyPress={handleKeyPress}
-          placeholder={placeholderText}
+          placeholder="Digite sua mensagem..."
           disabled={disabled}
           className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed text-sm shadow-inner"
         />
