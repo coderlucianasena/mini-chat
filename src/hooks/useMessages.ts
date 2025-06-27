@@ -13,7 +13,7 @@ const convertApiMessageToMessageType = (apiMessage: ApiMessage): MessageType => 
   senderName: apiMessage.author
 });
 
-export const useMessages = (userName: string) => {
+export const useMessages = (userName?: string) => {
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [typingUser, setTypingUser] = useState<string | null>(null);
@@ -87,7 +87,14 @@ export const useMessages = (userName: string) => {
 
   // Carrega mensagens iniciais e inicia simulação quando userName muda
   useEffect(() => {
-    if (!userName) return;
+    // Só executa se userName existir e não for vazio
+    if (!userName || userName.trim() === '') {
+      // Limpar estado se não há userName
+      setMessages([]);
+      setTypingUser(null);
+      clearSimulation();
+      return;
+    }
 
     // Limpar simulação anterior
     clearSimulation();
