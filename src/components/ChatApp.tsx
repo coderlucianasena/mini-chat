@@ -18,8 +18,8 @@ export interface MessageType {
 }
 
 const ChatApp = () => {
-  const { messages, sendMessage, isLoading, typingUser } = useMessages();
   const { userName, setUserName, hasUserName } = useUserName();
+  const { messages, sendMessage, isLoading, typingUser } = useMessages(userName);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {

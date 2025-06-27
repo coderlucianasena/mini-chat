@@ -13,14 +13,12 @@ const convertApiMessageToMessageType = (apiMessage: ApiMessage): MessageType => 
   senderName: apiMessage.author
 });
 
-export const useMessages = () => {
+export const useMessages = (userName: string) => {
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [hasLoadedInitialMessages, setHasLoadedInitialMessages] = useState(false);
   const [typingUser, setTypingUser] = useState<string | null>(null);
   
   // Refs para controlar a simulação
-  const simulationInitialized = useRef(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const messageIndexRef = useRef(0);
 
@@ -36,27 +34,14 @@ export const useMessages = () => {
     { author: "Carlos", text: "Adorei a interface!" }
   ];
 
-  // Carrega mensagens iniciais sempre que a aplicação inicia
-  useEffect(() => {
-    const loadMessages = async () => {
-      setIsLoading(true);
-      try {
-        const apiMessages = await getMessages();
-        const convertedMessages = apiMessages.map(convertApiMessageToMessageType);
-        setMessages(convertedMessages);
-        console.log('Mensagens iniciais carregadas:', convertedMessages);
-      } catch (error) {
-        console.error('Erro ao carregar mensagens:', error);
-      } finally {
-        setIsLoading(false);
-        setHasLoadedInitialMessages(true);
-      }
-    };
-
-    if (!hasLoadedInitialMessages) {
-      loadMessages();
+  // Função para limpar timeouts
+  const clearSimulation = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
     }
-  }, [hasLoadedInitialMessages]);
+    setTypingUser(null);
+  };
 
   // Função para processar próxima mensagem simulada
   const processNextMessage = () => {
@@ -88,10 +73,10 @@ export const useMessages = () => {
         // Avançar para próxima mensagem
         messageIndexRef.current++;
         
-        // Agendar próxima mensagem após 3-5 segundos
+        // Agendar próxima mensagem após 5 segundos
         timeoutRef.current = setTimeout(() => {
           processNextMessage();
-        }, Math.random() * 2000 + 3000); // Entre 3-5 segundos
+        }, 5000);
         
       } catch (error) {
         console.error('Erro ao adicionar mensagem simulada:', error);
@@ -100,27 +85,42 @@ export const useMessages = () => {
     }, Math.random() * 1000 + 2000); // Entre 2-3 segundos digitando
   };
 
-  // Inicializa simulação de mensagens sequenciais
+  // Carrega mensagens iniciais e inicia simulação quando userName muda
   useEffect(() => {
-    if (simulationInitialized.current || !hasLoadedInitialMessages) return;
+    if (!userName) return;
 
-    simulationInitialized.current = true;
-    console.log('Iniciando simulação sequencial de mensagens...');
-    
-    // Começar primeira mensagem após 2 segundos
-    timeoutRef.current = setTimeout(() => {
-      processNextMessage();
-    }, 2000);
+    // Limpar simulação anterior
+    clearSimulation();
+    messageIndexRef.current = 0;
+
+    const loadMessages = async () => {
+      setIsLoading(true);
+      try {
+        const apiMessages = await getMessages();
+        const convertedMessages = apiMessages.map(convertApiMessageToMessageType);
+        setMessages(convertedMessages);
+        console.log('Mensagens iniciais carregadas para:', userName);
+        
+        // Iniciar simulação após carregar mensagens iniciais
+        timeoutRef.current = setTimeout(() => {
+          processNextMessage();
+        }, 2000);
+        
+      } catch (error) {
+        console.error('Erro ao carregar mensagens:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadMessages();
 
     // Cleanup function
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-        timeoutRef.current = null;
-      }
+      clearSimulation();
       console.log('Limpando simulação de mensagens');
     };
-  }, [hasLoadedInitialMessages, notifyNewMessage]);
+  }, [userName, notifyNewMessage]);
 
   const sendMessage = async (text: string) => {
     setIsLoading(true);
