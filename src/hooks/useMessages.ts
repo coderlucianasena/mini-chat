@@ -51,32 +51,32 @@ export const useMessages = () => {
     }
   }, [messages.length, hasLoadedInitialMessages, setMessages]);
 
-  // Simula chegada de novas mensagens a cada 5 segundos com indicador de digitação
+  // Simula chegada de novas mensagens seguindo a sequência: João → Maria → João → Ana
   useEffect(() => {
     // Só inicia simulação após carregar mensagens iniciais
     if (!hasLoadedInitialMessages) return;
 
-    // Sequência de mensagens simuladas baseada na API inicial + Ana
-    const simulatedMessages = [
+    // Sequência exata conforme especificação: João → Maria → João → Ana
+    const messageSequence = [
       { author: "João", text: "Olá, pessoal!" },
       { author: "Maria", text: "Oi, João! Tudo bem?" },
       { author: "João", text: "Tudo ótimo! E com você?" },
       { author: "Ana", text: "Que legal esse chat!" }
     ];
 
-    let messageIndex = 0;
-    console.log('Iniciando simulação com', simulatedMessages.length, 'mensagens');
+    let currentIndex = 0;
+    console.log('Iniciando simulação com sequência:', messageSequence);
 
     const interval = setInterval(async () => {
-      const messageToAdd = simulatedMessages[messageIndex];
-      console.log('Enviando mensagem do índice', messageIndex, ':', messageToAdd);
+      const currentMessage = messageSequence[currentIndex];
+      console.log(`Enviando mensagem ${currentIndex + 1}/4:`, currentMessage);
       
       // Mostrar indicador de digitação por 2 segundos
-      setTypingUser(messageToAdd.author);
+      setTypingUser(currentMessage.author);
       
       setTimeout(async () => {
         try {
-          const newApiMessage = await postMessage(messageToAdd);
+          const newApiMessage = await postMessage(currentMessage);
           const newMessage = convertApiMessageToMessageType(newApiMessage);
           
           // Notificar sobre nova mensagem recebida
@@ -85,9 +85,14 @@ export const useMessages = () => {
           setMessages(prev => [...prev, newMessage]);
           setTypingUser(null); // Remover indicador de digitação
           
-          // Avançar para próxima mensagem, voltando ao início quando chegar ao fim
-          messageIndex = (messageIndex + 1) % simulatedMessages.length;
-          console.log('Próximo índice será:', messageIndex);
+          // Avançar para próxima mensagem na sequência
+          currentIndex = (currentIndex + 1) % messageSequence.length;
+          console.log('Próximo índice será:', currentIndex);
+          
+          // Se voltou ao início (índice 0), log para confirmar o loop
+          if (currentIndex === 0) {
+            console.log('Voltando ao início da sequência');
+          }
         } catch (error) {
           console.error('Erro ao adicionar mensagem simulada:', error);
           setTypingUser(null);
