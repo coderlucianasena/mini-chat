@@ -1,8 +1,8 @@
 
-import React, { useState, useRef, useEffect } from 'react';
-import { Send } from 'lucide-react';
+import React, { useRef, useEffect } from 'react';
 import Message from './Message';
 import MessageInput from './MessageInput';
+import { useMessages } from '../hooks/useMessages';
 
 export interface MessageType {
   id: number;
@@ -13,30 +13,7 @@ export interface MessageType {
 }
 
 const ChatApp = () => {
-  const [messages, setMessages] = useState<MessageType[]>([
-    {
-      id: 1,
-      text: "Olá! Bem-vindo ao Mini Chat! 👋",
-      sender: 'other',
-      timestamp: new Date(Date.now() - 180000),
-      senderName: "Sistema"
-    },
-    {
-      id: 2,
-      text: "Esta é uma aplicação de chat desenvolvida em React!",
-      sender: 'other',
-      timestamp: new Date(Date.now() - 120000),
-      senderName: "Sistema"
-    },
-    {
-      id: 3,
-      text: "Você pode começar a conversar digitando uma mensagem abaixo.",
-      sender: 'other',
-      timestamp: new Date(Date.now() - 60000),
-      senderName: "Sistema"
-    }
-  ]);
-
+  const { messages, sendMessage, isLoading } = useMessages();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -47,125 +24,37 @@ const ChatApp = () => {
     scrollToBottom();
   }, [messages]);
 
-  // Simulação de mensagens de outros usuários em tempo real
-  useEffect(() => {
-    const simulateIncomingMessages = () => {
-      const randomMessages = [
-        { text: "Alguém mais está online?", sender: "João" },
-        { text: "Que chat legal! 😊", sender: "Maria" },
-        { text: "Estou gostando da interface!", sender: "Pedro" },
-        { text: "Como vocês estão hoje?", sender: "Ana" },
-        { text: "Esse chat está funcionando bem!", sender: "Carlos" },
-        { text: "Boa tarde pessoal! 🌅", sender: "Lucia" },
-        { text: "Alguém sabe que horas são?", sender: "Roberto" },
-        { text: "Adorei o design deste chat!", sender: "Fernanda" },
-        { text: "Vamos conversar mais! 💬", sender: "Diego" },
-        { text: "Que aplicação incrível!", sender: "Camila" }
-      ];
-
-      const getRandomMessage = () => {
-        const randomIndex = Math.floor(Math.random() * randomMessages.length);
-        return randomMessages[randomIndex];
-      };
-
-      const addRandomMessage = () => {
-        const randomMsg = getRandomMessage();
-        const newMessage: MessageType = {
-          id: Date.now() + Math.random(),
-          text: randomMsg.text,
-          sender: 'other',
-          timestamp: new Date(),
-          senderName: randomMsg.sender
-        };
-
-        setMessages(prev => [...prev, newMessage]);
-      };
-
-      // Simular mensagens a cada 8-15 segundos
-      const getRandomInterval = () => Math.random() * 7000 + 8000; // 8-15 segundos
-
-      const scheduleNextMessage = () => {
-        setTimeout(() => {
-          addRandomMessage();
-          scheduleNextMessage(); // Reagendar próxima mensagem
-        }, getRandomInterval());
-      };
-
-      // Iniciar simulação após 5 segundos
-      setTimeout(() => {
-        scheduleNextMessage();
-      }, 5000);
-    };
-
-    simulateIncomingMessages();
-  }, []);
-
-  const handleSendMessage = (text: string) => {
-    const newMessage: MessageType = {
-      id: messages.length + 1,
-      text,
-      sender: 'user',
-      timestamp: new Date(),
-      senderName: "Você"
-    };
-
-    setMessages(prev => [...prev, newMessage]);
-
-    // Simular resposta automática após 2 segundos
-    setTimeout(() => {
-      const responses = [
-        "Interessante! Me conte mais sobre isso.",
-        "Que legal! Adorei saber disso 😄",
-        "Entendi! Obrigada por compartilhar.",
-        "Nossa, que incrível! 🎉",
-        "Perfeito! Vamos continuar conversando."
-      ];
-      
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-      
-      const autoMessage: MessageType = {
-        id: Date.now(),
-        text: randomResponse,
-        sender: 'other',
-        timestamp: new Date(),
-        senderName: "Sistema"
-      };
-
-      setMessages(prev => [...prev, autoMessage]);
-    }, 2000);
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Título principal */}
-      <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-indigo-600 mb-2">Mini Chat</h1>
-        <p className="text-gray-600">Aplicação de chat em tempo real</p>
+      <div className="text-center py-8">
+        <h1 className="text-3xl font-bold text-gray-800">Mini Chat</h1>
       </div>
 
       {/* Container do chat */}
-      <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden">
-        {/* Header do chat */}
-        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white p-4 rounded-t-2xl">
-          <h2 className="text-lg font-semibold">Chat Online</h2>
-          <p className="text-sm text-indigo-100">{messages.length} mensagens</p>
-        </div>
+      <div className="flex-1 max-w-2xl mx-auto w-full px-4 pb-4">
+        <div className="bg-white rounded-lg shadow-lg h-full flex flex-col">
+          {/* Header do chat */}
+          <div className="bg-blue-600 text-white px-6 py-4 rounded-t-lg">
+            <h2 className="text-lg font-semibold">Chat ({messages.length} mensagens)</h2>
+          </div>
 
-        {/* Área de mensagens */}
-        <div className="h-96 overflow-y-auto p-4 space-y-3 bg-gray-50">
-          {messages.map((message, index) => (
-            <Message 
-              key={message.id} 
-              message={message} 
-              isNew={index >= messages.length - 1}
-            />
-          ))}
-          <div ref={messagesEndRef} />
-        </div>
+          {/* Área de mensagens */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-96">
+            {messages.map((message, index) => (
+              <Message 
+                key={message.id} 
+                message={message} 
+                isNew={index >= messages.length - 1}
+              />
+            ))}
+            <div ref={messagesEndRef} />
+          </div>
 
-        {/* Input de mensagem */}
-        <div className="p-4 bg-white border-t border-gray-200">
-          <MessageInput onSendMessage={handleSendMessage} />
+          {/* Input de mensagem */}
+          <div className="p-4 border-t border-gray-200">
+            <MessageInput onSendMessage={sendMessage} disabled={isLoading} />
+          </div>
         </div>
       </div>
     </div>
