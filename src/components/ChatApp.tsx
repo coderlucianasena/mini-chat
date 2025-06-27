@@ -1,7 +1,7 @@
-
 import React, { useRef, useEffect } from 'react';
 import Message from './Message';
 import MessageInput from './MessageInput';
+import NotificationStatus from './NotificationStatus';
 import { useMessages } from '../hooks/useMessages';
 
 export interface MessageType {
@@ -30,14 +30,17 @@ const ChatApp = () => {
       <div className="w-full max-w-md mx-auto">
         <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 h-[600px] flex flex-col overflow-hidden">
           {/* Header do chat */}
-          <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-4 flex items-center gap-4">
-            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-white font-bold text-lg border-2 border-white/30">
-              AC
+          <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-white font-bold text-lg border-2 border-white/30">
+                AC
+              </div>
+              <div>
+                <h2 className="font-semibold text-white text-lg">Ana Clara</h2>
+                <p className="text-sm text-blue-100">Online</p>
+              </div>
             </div>
-            <div>
-              <h2 className="font-semibold text-white text-lg">Ana Clara</h2>
-              <p className="text-sm text-blue-100">Online</p>
-            </div>
+            <NotificationStatus />
           </div>
 
           {/* Área de mensagens */}

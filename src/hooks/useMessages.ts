@@ -1,8 +1,8 @@
-
 import { useState, useEffect } from 'react';
 import { getMessages, postMessage, ApiMessage, NewMessage } from '../services/mockApi';
 import { MessageType } from '../components/ChatApp';
 import { useLocalStorage } from './useLocalStorage';
+import { useNotifications } from './useNotifications';
 
 // Função para converter ApiMessage para MessageType
 const convertApiMessageToMessageType = (apiMessage: ApiMessage): MessageType => ({
@@ -18,6 +18,8 @@ export const useMessages = () => {
   const [messages, setMessages] = useLocalStorage<MessageType[]>('chat-messages', []);
   const [isLoading, setIsLoading] = useState(false);
   const [hasLoadedInitialMessages, setHasLoadedInitialMessages] = useState(false);
+
+  const { notifyNewMessage } = useNotifications();
 
   // Carrega mensagens iniciais apenas se não houver mensagens no localStorage
   useEffect(() => {
@@ -71,6 +73,10 @@ export const useMessages = () => {
         try {
           const newApiMessage = await postMessage(messageToAdd);
           const newMessage = convertApiMessageToMessageType(newApiMessage);
+          
+          // Notificar sobre nova mensagem recebida
+          notifyNewMessage(newMessage.senderName, newMessage.text);
+          
           setMessages(prev => [...prev, newMessage]);
           messageIndex++;
         } catch (error) {
@@ -80,7 +86,7 @@ export const useMessages = () => {
     }, 5000); // A cada 5 segundos
 
     return () => clearInterval(interval);
-  }, [hasLoadedInitialMessages, setMessages]);
+  }, [hasLoadedInitialMessages, setMessages, notifyNewMessage]);
 
   const sendMessage = async (text: string) => {
     setIsLoading(true);
