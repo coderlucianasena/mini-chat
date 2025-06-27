@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Send } from 'lucide-react';
 import Message from './Message';
@@ -97,34 +96,36 @@ const ChatApp = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      {/* Header */}
-      <div className="bg-white shadow-lg border-b border-gray-200 p-4">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
-            <span className="text-white font-semibold text-sm">AC</span>
-          </div>
-          <div>
-            <h1 className="text-lg font-semibold text-gray-800">Ana Clara</h1>
-            <p className="text-sm text-green-500">Online</p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+      <div className="w-full max-w-md mx-auto h-[600px] bg-white rounded-lg shadow-xl overflow-hidden flex flex-col">
+        {/* Header */}
+        <div className="bg-white shadow-lg border-b border-gray-200 p-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+              <span className="text-white font-semibold text-sm">AC</span>
+            </div>
+            <div>
+              <h1 className="text-lg font-semibold text-gray-800">Ana Clara</h1>
+              <p className="text-sm text-green-500">Online</p>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Messages Container */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((message, index) => (
-          <Message 
-            key={message.id} 
-            message={message} 
-            isNew={index >= messages.length - 1}
-          />
-        ))}
-        <div ref={messagesEndRef} />
-      </div>
+        {/* Messages Container */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {messages.map((message, index) => (
+            <Message 
+              key={message.id} 
+              message={message} 
+              isNew={index >= messages.length - 1}
+            />
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
 
-      {/* Message Input */}
-      <MessageInput onSendMessage={handleSendMessage} />
+        {/* Message Input */}
+        <MessageInput onSendMessage={handleSendMessage} />
+      </div>
     </div>
   );
 };
