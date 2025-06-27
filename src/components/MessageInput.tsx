@@ -26,26 +26,28 @@ const MessageInput = ({ onSendMessage, disabled = false }: MessageInputProps) =>
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex items-center space-x-2">
-      <input
-        type="text"
-        value={inputText}
-        onChange={(e) => setInputText(e.target.value)}
-        onKeyPress={handleKeyPress}
-        placeholder="Digite sua mensagem..."
-        disabled={disabled}
-        className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
-      />
+    <form onSubmit={handleSubmit} className="flex items-center space-x-3">
+      <div className="flex-1 relative">
+        <input
+          type="text"
+          value={inputText}
+          onChange={(e) => setInputText(e.target.value)}
+          onKeyPress={handleKeyPress}
+          placeholder="Digite sua mensagem..."
+          disabled={disabled}
+          className="w-full px-5 py-3 pr-12 border border-gray-200 rounded-full bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 placeholder-gray-400"
+        />
+      </div>
       <button
         type="submit"
         disabled={!inputText.trim() || disabled}
-        className={`p-2 rounded-full transition-all duration-200 ${
+        className={`p-3 rounded-full transition-all duration-200 shadow-md ${
           inputText.trim() && !disabled
-            ? 'bg-blue-600 text-white hover:bg-blue-700'
-            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:from-blue-600 hover:to-indigo-700 hover:shadow-lg transform hover:scale-105'
+            : 'bg-gray-200 text-gray-400 cursor-not-allowed'
         }`}
       >
-        <Send size={18} />
+        <Send size={20} />
       </button>
     </form>
   );

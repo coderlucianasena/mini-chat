@@ -51,36 +51,36 @@ const Message = ({ message, isNew = false }: MessageProps) => {
 
   return (
     <div 
-      className={`flex items-start gap-3 ${isUser ? 'flex-row-reverse' : 'flex-row'} ${
+      className={`flex items-start gap-4 ${isUser ? 'flex-row-reverse' : 'flex-row'} ${
         isNew ? 'animate-in slide-in-from-bottom-2 duration-300' : ''
-      }`}
+      } group`}
     >
       {/* Avatar */}
-      <Avatar className="w-8 h-8 flex-shrink-0">
-        <AvatarFallback className={`${getAvatarColor(message.senderName)} text-white text-xs font-semibold`}>
+      <Avatar className="w-10 h-10 flex-shrink-0 ring-2 ring-white shadow-md">
+        <AvatarFallback className={`${getAvatarColor(message.senderName)} text-white text-sm font-bold`}>
           {getInitials(message.senderName)}
         </AvatarFallback>
       </Avatar>
 
       {/* Mensagem */}
-      <div className={`flex flex-col ${isUser ? 'items-end' : 'items-start'} max-w-xs`}>
+      <div className={`flex flex-col ${isUser ? 'items-end' : 'items-start'} max-w-md`}>
         {/* Nome do usuário */}
-        <span className={`text-xs font-medium mb-1 ${
-          isUser ? 'text-indigo-600' : 'text-gray-600'
+        <span className={`text-xs font-semibold mb-2 px-1 ${
+          isUser ? 'text-indigo-700' : 'text-gray-700'
         }`}>
           {message.senderName}
         </span>
         
         {/* Balão da mensagem */}
-        <div className={`px-4 py-2 rounded-2xl shadow-sm border ${
+        <div className={`px-5 py-3 rounded-2xl shadow-sm border transition-all duration-200 group-hover:shadow-md ${
           isUser 
-            ? 'bg-indigo-500 text-white' 
+            ? 'bg-gradient-to-r from-indigo-500 to-blue-500 text-white' 
             : getBalloonColor(message.senderName)
-        }`}>
-          <p className="text-sm leading-relaxed">{message.text}</p>
-          <div className={`text-xs mt-1 ${
-            isUser ? 'text-indigo-100' : 'opacity-70'
-          }`}>
+        } ${isUser ? 'rounded-br-md' : 'rounded-bl-md'}`}>
+          <p className="text-sm leading-relaxed mb-1">{message.text}</p>
+          <div className={`text-xs ${
+            isUser ? 'text-indigo-100' : 'opacity-60'
+          } text-right`}>
             {formatTime(message.timestamp)}
           </div>
         </div>
