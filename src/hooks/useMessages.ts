@@ -71,9 +71,11 @@ export const useMessages = () => {
     ];
 
     let messageIndex = 0;
+    console.log('Iniciando simulação com', simulatedMessages.length, 'mensagens');
 
     const interval = setInterval(async () => {
       const messageToAdd = simulatedMessages[messageIndex];
+      console.log('Enviando mensagem do índice', messageIndex, ':', messageToAdd);
       
       // Mostrar indicador de digitação por 2 segundos
       setTypingUser(messageToAdd.author);
@@ -91,6 +93,7 @@ export const useMessages = () => {
           
           // Avançar para próxima mensagem, voltando ao início quando chegar ao fim
           messageIndex = (messageIndex + 1) % simulatedMessages.length;
+          console.log('Próximo índice será:', messageIndex);
         } catch (error) {
           console.error('Erro ao adicionar mensagem simulada:', error);
           setTypingUser(null);
