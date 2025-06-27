@@ -7,8 +7,10 @@ interface MessageProps {
 }
 
 const Message = ({ message }: MessageProps) => {
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('pt-BR', { 
+  const formatTime = (date: Date | string | number) => {
+    // Garantir que sempre temos um objeto Date válido
+    const dateObj = date instanceof Date ? date : new Date(date);
+    return dateObj.toLocaleTimeString('pt-BR', { 
       hour: '2-digit', 
       minute: '2-digit' 
     });
