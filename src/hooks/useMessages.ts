@@ -55,7 +55,7 @@ export const useMessages = () => {
     }
   }, [messages.length, hasLoadedInitialMessages, setMessages]);
 
-  // Simula chegada de novas mensagens seguindo a sequência: João → Maria → João → Ana
+  // Simula chegada de novas mensagens - executa apenas uma vez
   useEffect(() => {
     // Só inicia simulação após carregar mensagens iniciais e se não estiver rodando
     if (!hasLoadedInitialMessages || simulationRunningRef.current) return;
@@ -116,7 +116,7 @@ export const useMessages = () => {
       simulationRunningRef.current = false;
       console.log('Limpando interval da simulação');
     };
-  }, [hasLoadedInitialMessages, setMessages, notifyNewMessage]);
+  }, [hasLoadedInitialMessages, notifyNewMessage]); // Removido setMessages da dependência
 
   const sendMessage = async (text: string) => {
     setIsLoading(true);
