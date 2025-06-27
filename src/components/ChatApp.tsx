@@ -55,10 +55,13 @@ const ChatApp = () => {
               <NotificationStatus />
               <button
                 onClick={() => setUserName('')}
-                className="p-2 hover:bg-white/10 rounded-full transition-colors"
-                title="Alterar nome"
+                className="p-2 hover:bg-white/10 rounded-full transition-colors group relative"
+                title="Clique para alterar seu nome de usuário"
               >
                 <Settings size={20} className="text-white" />
+                <div className="absolute bottom-full right-0 mb-2 bg-gray-800 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                  Alterar nome de usuário
+                </div>
               </button>
             </div>
           </div>
@@ -88,7 +91,11 @@ const ChatApp = () => {
 
           {/* Input de mensagem */}
           <div className="p-6 bg-white/90 backdrop-blur-sm border-t border-gray-100/50">
-            <MessageInput onSendMessage={sendMessage} disabled={isLoading} />
+            <MessageInput 
+              onSendMessage={sendMessage} 
+              disabled={isLoading} 
+              userName={userName}
+            />
             {isLoading && (
               <div className="flex items-center justify-center mt-3">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
