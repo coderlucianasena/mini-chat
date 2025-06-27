@@ -1,21 +1,36 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Send } from 'lucide-react';
 
 interface MessageInputProps {
   onSendMessage: (text: string) => void;
   disabled?: boolean;
   userName?: string;
+  onTyping?: (isTyping: boolean) => void;
 }
 
-const MessageInput = ({ onSendMessage, disabled = false, userName }: MessageInputProps) => {
+const MessageInput = ({ onSendMessage, disabled = false, userName, onTyping }: MessageInputProps) => {
   const [inputText, setInputText] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+
+  useEffect(() => {
+    const typingTimeout = setTimeout(() => {
+      if (isTyping) {
+        setIsTyping(false);
+        onTyping?.(false);
+      }
+    }, 1000);
+
+    return () => clearTimeout(typingTimeout);
+  }, [inputText, isTyping, onTyping]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (inputText.trim() && !disabled) {
       onSendMessage(inputText.trim());
       setInputText('');
+      setIsTyping(false);
+      onTyping?.(false);
     }
   };
 
@@ -23,6 +38,19 @@ const MessageInput = ({ onSendMessage, disabled = false, userName }: MessageInpu
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSubmit(e);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInputText(value);
+    
+    if (value.trim() && !isTyping) {
+      setIsTyping(true);
+      onTyping?.(true);
+    } else if (!value.trim() && isTyping) {
+      setIsTyping(false);
+      onTyping?.(false);
     }
   };
 
@@ -36,7 +64,7 @@ const MessageInput = ({ onSendMessage, disabled = false, userName }: MessageInpu
         <input
           type="text"
           value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
+          onChange={handleInputChange}
           onKeyPress={handleKeyPress}
           placeholder={placeholderText}
           disabled={disabled}

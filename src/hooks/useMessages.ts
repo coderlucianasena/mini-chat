@@ -17,14 +17,23 @@ export const useMessages = (userName?: string) => {
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [typingUser, setTypingUser] = useState<string | null>(null);
+  const [userTyping, setUserTyping] = useState(false);
   
   // Refs para controlar a simulação
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const messageIndexRef = useRef(0);
+  const initialMessagesIndexRef = useRef(0);
 
   const { notifyNewMessage } = useNotifications();
 
-  // Lista de mensagens que serão enviadas sequencialmente
+  // Lista de mensagens iniciais que serão carregadas uma por vez
+  const initialMessages = [
+    { id: 1, author: "João", text: "Olá, pessoal!" },
+    { id: 2, author: "Maria", text: "Oi, João! Tudo bem?" },
+    { id: 3, author: "João", text: "Tudo ótimo! E com você?" }
+  ];
+
+  // Lista de mensagens que serão enviadas sequencialmente após as iniciais
   const simulatedMessages = [
     { author: "Ana", text: "Que legal esse chat!" },
     { author: "Carlos", text: "Oi pessoal! Como vocês estão?" },
@@ -41,6 +50,30 @@ export const useMessages = (userName?: string) => {
       timeoutRef.current = null;
     }
     setTypingUser(null);
+  };
+
+  // Função para carregar mensagens iniciais sequencialmente
+  const loadInitialMessagesSequentially = () => {
+    if (initialMessagesIndexRef.current >= initialMessages.length) {
+      // Após carregar todas as mensagens iniciais, começar simulação
+      timeoutRef.current = setTimeout(() => {
+        processNextMessage();
+      }, 3000);
+      return;
+    }
+
+    const currentMessage = initialMessages[initialMessagesIndexRef.current];
+    const convertedMessage = convertApiMessageToMessageType(currentMessage);
+    
+    setMessages(prev => [...prev, convertedMessage]);
+    console.log(`Mensagem inicial carregada: ${currentMessage.text}`);
+    
+    initialMessagesIndexRef.current++;
+    
+    // Agendar próxima mensagem inicial
+    timeoutRef.current = setTimeout(() => {
+      loadInitialMessagesSequentially();
+    }, 1500);
   };
 
   // Função para processar próxima mensagem simulada
@@ -82,16 +115,15 @@ export const useMessages = (userName?: string) => {
         console.error('Erro ao adicionar mensagem simulada:', error);
         setTypingUser(null);
       }
-    }, Math.random() * 1000 + 2000); // Entre 2-3 segundos digitando
+    }, Math.random() * 1000 + 2000);
   };
 
   // Carrega mensagens iniciais e inicia simulação quando userName muda
   useEffect(() => {
-    // Só executa se userName existir e não for vazio
     if (!userName || userName.trim() === '') {
-      // Limpar estado se não há userName
       setMessages([]);
       setTypingUser(null);
+      setUserTyping(false);
       clearSimulation();
       return;
     }
@@ -99,38 +131,26 @@ export const useMessages = (userName?: string) => {
     // Limpar simulação anterior
     clearSimulation();
     messageIndexRef.current = 0;
+    initialMessagesIndexRef.current = 0;
+    setMessages([]);
 
-    const loadMessages = async () => {
-      setIsLoading(true);
-      try {
-        const apiMessages = await getMessages();
-        const convertedMessages = apiMessages.map(convertApiMessageToMessageType);
-        setMessages(convertedMessages);
-        console.log('Mensagens iniciais carregadas para:', userName);
-        
-        // Iniciar simulação após carregar mensagens iniciais
-        timeoutRef.current = setTimeout(() => {
-          processNextMessage();
-        }, 2000);
-        
-      } catch (error) {
-        console.error('Erro ao carregar mensagens:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadMessages();
+    console.log('Iniciando carregamento sequencial de mensagens para:', userName);
+    
+    // Iniciar carregamento sequencial das mensagens iniciais
+    timeoutRef.current = setTimeout(() => {
+      loadInitialMessagesSequentially();
+    }, 1000);
 
     // Cleanup function
     return () => {
       clearSimulation();
       console.log('Limpando simulação de mensagens');
     };
-  }, [userName]); // Removido notifyNewMessage das dependências
+  }, [userName]);
 
   const sendMessage = async (text: string) => {
     setIsLoading(true);
+    setUserTyping(false);
     try {
       const newApiMessage = await postMessage({ author: 'Você', text });
       const newMessage = convertApiMessageToMessageType(newApiMessage);
@@ -142,10 +162,16 @@ export const useMessages = (userName?: string) => {
     }
   };
 
+  const handleUserTyping = (isTyping: boolean) => {
+    setUserTyping(isTyping);
+  };
+
   return {
     messages,
     sendMessage,
     isLoading,
-    typingUser
+    typingUser,
+    userTyping,
+    handleUserTyping
   };
 };

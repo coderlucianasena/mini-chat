@@ -19,7 +19,7 @@ export interface MessageType {
 
 const ChatApp = () => {
   const { userName, setUserName, hasUserName } = useUserName();
-  const { messages, sendMessage, isLoading, typingUser } = useMessages(hasUserName ? userName : undefined);
+  const { messages, sendMessage, isLoading, typingUser, userTyping, handleUserTyping } = useMessages(hasUserName ? userName : undefined);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -28,7 +28,7 @@ const ChatApp = () => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, typingUser]);
+  }, [messages, typingUser, userTyping]);
 
   // Se o usuário não definiu o nome, mostrar tela de configuração
   if (!hasUserName) {
@@ -53,16 +53,18 @@ const ChatApp = () => {
             </div>
             <div className="flex items-center gap-3">
               <NotificationStatus />
-              <button
-                onClick={() => setUserName('')}
-                className="p-2 hover:bg-white/10 rounded-full transition-colors group relative"
-                title="Clique para alterar seu nome de usuário"
-              >
-                <Settings size={20} className="text-white" />
-                <div className="absolute bottom-full right-0 mb-2 bg-gray-800 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                  Alterar nome de usuário
+              <div className="relative group">
+                <button
+                  onClick={() => setUserName('')}
+                  className="p-2 hover:bg-white/10 rounded-full transition-colors group relative"
+                  title="Clique para alterar seu nome de usuário"
+                >
+                  <Settings size={20} className="text-white" />
+                </button>
+                <div className="absolute bottom-full right-0 mb-2 bg-gray-800 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                  Clique aqui para trocar seu nome
                 </div>
-              </button>
+              </div>
             </div>
           </div>
 
@@ -71,7 +73,7 @@ const ChatApp = () => {
             {messages.length === 0 ? (
               <div className="text-center text-gray-500 py-12">
                 <div className="text-4xl mb-4">💬</div>
-                <p className="text-gray-600">Nenhuma mensagem ainda. Seja o primeiro a conversar!</p>
+                <p className="text-gray-600">Carregando mensagens...</p>
               </div>
             ) : (
               <>
@@ -84,6 +86,20 @@ const ChatApp = () => {
                 {typingUser && (
                   <TypingIndicator userName={typingUser} />
                 )}
+                {userTyping && (
+                  <div className="flex justify-end">
+                    <div className="bg-blue-100 rounded-2xl px-4 py-3 max-w-xs">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-blue-600">Você está digitando</span>
+                        <div className="flex gap-1">
+                          <div className="w-1 h-1 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                          <div className="w-1 h-1 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                          <div className="w-1 h-1 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 <div ref={messagesEndRef} />
               </>
             )}
@@ -95,6 +111,7 @@ const ChatApp = () => {
               onSendMessage={sendMessage} 
               disabled={isLoading} 
               userName={userName}
+              onTyping={handleUserTyping}
             />
             {isLoading && (
               <div className="flex items-center justify-center mt-3">
