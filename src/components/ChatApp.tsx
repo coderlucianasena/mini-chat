@@ -47,6 +47,59 @@ const ChatApp = () => {
     scrollToBottom();
   }, [messages]);
 
+  // Simulação de mensagens de outros usuários em tempo real
+  useEffect(() => {
+    const simulateIncomingMessages = () => {
+      const randomMessages = [
+        { text: "Alguém mais está online?", sender: "João" },
+        { text: "Que chat legal! 😊", sender: "Maria" },
+        { text: "Estou gostando da interface!", sender: "Pedro" },
+        { text: "Como vocês estão hoje?", sender: "Ana" },
+        { text: "Esse chat está funcionando bem!", sender: "Carlos" },
+        { text: "Boa tarde pessoal! 🌅", sender: "Lucia" },
+        { text: "Alguém sabe que horas são?", sender: "Roberto" },
+        { text: "Adorei o design deste chat!", sender: "Fernanda" },
+        { text: "Vamos conversar mais! 💬", sender: "Diego" },
+        { text: "Que aplicação incrível!", sender: "Camila" }
+      ];
+
+      const getRandomMessage = () => {
+        const randomIndex = Math.floor(Math.random() * randomMessages.length);
+        return randomMessages[randomIndex];
+      };
+
+      const addRandomMessage = () => {
+        const randomMsg = getRandomMessage();
+        const newMessage: MessageType = {
+          id: Date.now() + Math.random(),
+          text: randomMsg.text,
+          sender: 'other',
+          timestamp: new Date(),
+          senderName: randomMsg.sender
+        };
+
+        setMessages(prev => [...prev, newMessage]);
+      };
+
+      // Simular mensagens a cada 8-15 segundos
+      const getRandomInterval = () => Math.random() * 7000 + 8000; // 8-15 segundos
+
+      const scheduleNextMessage = () => {
+        setTimeout(() => {
+          addRandomMessage();
+          scheduleNextMessage(); // Reagendar próxima mensagem
+        }, getRandomInterval());
+      };
+
+      // Iniciar simulação após 5 segundos
+      setTimeout(() => {
+        scheduleNextMessage();
+      }, 5000);
+    };
+
+    simulateIncomingMessages();
+  }, []);
+
   const handleSendMessage = (text: string) => {
     const newMessage: MessageType = {
       id: messages.length + 1,
