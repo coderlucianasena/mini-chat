@@ -56,18 +56,12 @@ export const useMessages = () => {
     // Só inicia simulação após carregar mensagens iniciais
     if (!hasLoadedInitialMessages) return;
 
-    // Lista de mensagens simuladas que será repetida em loop
+    // Sequência de mensagens simuladas baseada na API inicial + Ana
     const simulatedMessages = [
-      { author: "Ana", text: "Que legal esse chat!" },
-      { author: "Pedro", text: "Estou gostando da interface!" },
-      { author: "Carlos", text: "Como vocês estão hoje?" },
-      { author: "Ana", text: "Estou bem! E vocês?" },
-      { author: "Lucia", text: "Esse chat está funcionando bem!" },
-      { author: "Pedro", text: "Concordo, muito bom mesmo!" },
-      { author: "Roberto", text: "Boa tarde pessoal! 🌅" },
-      { author: "Fernanda", text: "Alguém sabe que horas são?" },
-      { author: "Carlos", text: "São 15:30 aqui!" },
-      { author: "Diego", text: "Adorei o design deste chat!" }
+      { author: "João", text: "Olá, pessoal!" },
+      { author: "Maria", text: "Oi, João! Tudo bem?" },
+      { author: "João", text: "Tudo ótimo! E com você?" },
+      { author: "Ana", text: "Que legal esse chat!" }
     ];
 
     let messageIndex = 0;
