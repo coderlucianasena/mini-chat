@@ -34,7 +34,7 @@ export const useNotifications = () => {
     }
   };
 
-  const notifyNewMessage = (senderName: string, messageText: string) => {
+  const notifyNewMessage = async (senderName: string, messageText: string) => {
     // Só notifica se a aba não estiver ativa e as notificações estiverem habilitadas
     if (document.hidden && notificationsEnabled) {
       showNotification(`Nova mensagem de ${senderName}`, {
@@ -46,7 +46,7 @@ export const useNotifications = () => {
     
     // Reproduz som de notificação se as notificações estiverem habilitadas
     if (notificationsEnabled) {
-      playNotificationSound();
+      await playNotificationSound();
     }
   };
 

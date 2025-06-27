@@ -168,7 +168,7 @@ export const useMessages = (userName?: string) => {
     setUserTyping(false);
     
     // Reproduz som de envio
-    playSendSound();
+    await playSendSound();
     
     try {
       const newApiMessage = await postMessage({ author: 'Você', text });
