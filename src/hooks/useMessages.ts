@@ -19,19 +19,28 @@ export const useMessages = () => {
   const [hasLoadedInitialMessages, setHasLoadedInitialMessages] = useState(false);
   const [typingUser, setTypingUser] = useState<string | null>(null);
   
-  // Ref para controlar se a simulação já foi iniciada
+  // Refs para controlar a simulação
   const simulationInitialized = useRef(false);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const messageIndexRef = useRef(0);
 
   const { notifyNewMessage } = useNotifications();
+
+  // Lista de mensagens que serão enviadas sequencialmente
+  const simulatedMessages = [
+    { author: "Ana", text: "Que legal esse chat!" },
+    { author: "Carlos", text: "Oi pessoal! Como vocês estão?" },
+    { author: "Maria", text: "Tudo bem por aqui!" },
+    { author: "João", text: "Que bom ver todos aqui!" },
+    { author: "Ana", text: "Vamos conversar mais!" },
+    { author: "Carlos", text: "Adorei a interface!" }
+  ];
 
   // Carrega mensagens iniciais sempre que a aplicação inicia
   useEffect(() => {
     const loadMessages = async () => {
       setIsLoading(true);
       try {
-        // Sempre carregar as mensagens iniciais do mock API
         const apiMessages = await getMessages();
         const convertedMessages = apiMessages.map(convertApiMessageToMessageType);
         setMessages(convertedMessages);
@@ -49,61 +58,67 @@ export const useMessages = () => {
     }
   }, [hasLoadedInitialMessages]);
 
-  // Simula chegada de novas mensagens a cada 5 segundos
+  // Função para processar próxima mensagem simulada
+  const processNextMessage = () => {
+    if (messageIndexRef.current >= simulatedMessages.length) {
+      console.log('Todas as mensagens simuladas foram enviadas');
+      return;
+    }
+
+    const currentMessage = simulatedMessages[messageIndexRef.current];
+    console.log(`Usuário ${currentMessage.author} começou a digitar...`);
+    
+    // Mostrar indicador de digitação
+    setTypingUser(currentMessage.author);
+    
+    // Após 2-3 segundos, enviar a mensagem
+    timeoutRef.current = setTimeout(async () => {
+      try {
+        const newApiMessage = await postMessage(currentMessage);
+        const newMessage = convertApiMessageToMessageType(newApiMessage);
+        
+        // Notificar sobre nova mensagem recebida
+        notifyNewMessage(newMessage.senderName, newMessage.text);
+        
+        setMessages(prev => [...prev, newMessage]);
+        setTypingUser(null);
+        
+        console.log(`Mensagem de ${currentMessage.author} enviada:`, currentMessage.text);
+        
+        // Avançar para próxima mensagem
+        messageIndexRef.current++;
+        
+        // Agendar próxima mensagem após 3-5 segundos
+        timeoutRef.current = setTimeout(() => {
+          processNextMessage();
+        }, Math.random() * 2000 + 3000); // Entre 3-5 segundos
+        
+      } catch (error) {
+        console.error('Erro ao adicionar mensagem simulada:', error);
+        setTypingUser(null);
+      }
+    }, Math.random() * 1000 + 2000); // Entre 2-3 segundos digitando
+  };
+
+  // Inicializa simulação de mensagens sequenciais
   useEffect(() => {
-    // Só inicia simulação se não foi inicializada e as mensagens iniciais foram carregadas
     if (simulationInitialized.current || !hasLoadedInitialMessages) return;
 
-    // Marcar que a simulação foi inicializada
     simulationInitialized.current = true;
-
-    // Mensagens adicionais para simular recebimento (além das 3 iniciais)
-    const additionalMessages = [
-      { author: "Ana", text: "Que legal esse chat!" },
-      { author: "Carlos", text: "Oi pessoal! Como vocês estão?" },
-      { author: "Maria", text: "Tudo bem por aqui!" },
-      { author: "João", text: "Que bom ver todos aqui!" }
-    ];
-
-    console.log('Iniciando simulação de mensagens a cada 5 segundos');
-
-    intervalRef.current = setInterval(async () => {
-      if (messageIndexRef.current < additionalMessages.length) {
-        const currentMessage = additionalMessages[messageIndexRef.current];
-        console.log(`Simulando mensagem ${messageIndexRef.current + 1}/${additionalMessages.length}:`, currentMessage);
-        
-        // Mostrar indicador de digitação por 2 segundos
-        setTypingUser(currentMessage.author);
-        
-        setTimeout(async () => {
-          try {
-            const newApiMessage = await postMessage(currentMessage);
-            const newMessage = convertApiMessageToMessageType(newApiMessage);
-            
-            // Notificar sobre nova mensagem recebida
-            notifyNewMessage(newMessage.senderName, newMessage.text);
-            
-            setMessages(prev => [...prev, newMessage]);
-            setTypingUser(null);
-            
-            // Avançar para próxima mensagem
-            messageIndexRef.current++;
-            
-          } catch (error) {
-            console.error('Erro ao adicionar mensagem simulada:', error);
-            setTypingUser(null);
-          }
-        }, 2000);
-      }
-    }, 5000); // A cada 5 segundos conforme especificação
+    console.log('Iniciando simulação sequencial de mensagens...');
+    
+    // Começar primeira mensagem após 2 segundos
+    timeoutRef.current = setTimeout(() => {
+      processNextMessage();
+    }, 2000);
 
     // Cleanup function
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
       }
-      console.log('Limpando interval da simulação');
+      console.log('Limpando simulação de mensagens');
     };
   }, [hasLoadedInitialMessages, notifyNewMessage]);
 
