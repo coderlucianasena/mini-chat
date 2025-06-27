@@ -127,7 +127,7 @@ export const useMessages = (userName?: string) => {
       clearSimulation();
       console.log('Limpando simulação de mensagens');
     };
-  }, [userName, notifyNewMessage]);
+  }, [userName]); // Removido notifyNewMessage das dependências
 
   const sendMessage = async (text: string) => {
     setIsLoading(true);
