@@ -24,6 +24,7 @@ export const useMessages = () => {
   // Ref para controlar se a simulação já foi iniciada
   const simulationInitialized = useRef(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const messageIndexRef = useRef(0);
 
   const { notifyNewMessage } = useNotifications();
 
@@ -52,9 +53,9 @@ export const useMessages = () => {
     if (!hasLoadedInitialMessages) {
       loadMessages();
     }
-  }, [hasLoadedInitialMessages]);
+  }, [hasLoadedInitialMessages, messages.length, setMessages]);
 
-  // Simula chegada de novas mensagens - executa apenas uma vez
+  // Simula chegada de novas mensagens a cada 5 segundos
   useEffect(() => {
     // Só inicia simulação se não foi inicializada e as mensagens iniciais foram carregadas
     if (simulationInitialized.current || !hasLoadedInitialMessages) return;
@@ -62,44 +63,45 @@ export const useMessages = () => {
     // Marcar que a simulação foi inicializada
     simulationInitialized.current = true;
 
-    // Sequência de mensagens
-    const messageSequence = [
-      { author: "João", text: "Olá, pessoal!" },
-      { author: "Maria", text: "Oi, João! Tudo bem?" },
-      { author: "João", text: "Tudo ótimo! E com você?" },
-      { author: "Ana", text: "Que legal esse chat!" }
+    // Mensagens adicionais para simular recebimento (além das 3 iniciais)
+    const additionalMessages = [
+      { author: "Ana", text: "Que legal esse chat!" },
+      { author: "Carlos", text: "Oi pessoal! Como vocês estão?" },
+      { author: "Maria", text: "Tudo bem por aqui!" },
+      { author: "João", text: "Que bom ver todos aqui!" }
     ];
 
-    let currentIndex = 0;
-    console.log('Iniciando simulação única com sequência:', messageSequence);
+    console.log('Iniciando simulação de mensagens a cada 5 segundos');
 
     intervalRef.current = setInterval(async () => {
-      const currentMessage = messageSequence[currentIndex];
-      console.log(`Enviando mensagem ${currentIndex + 1}/4:`, currentMessage);
-      
-      // Mostrar indicador de digitação por 2 segundos
-      setTypingUser(currentMessage.author);
-      
-      setTimeout(async () => {
-        try {
-          const newApiMessage = await postMessage(currentMessage);
-          const newMessage = convertApiMessageToMessageType(newApiMessage);
-          
-          // Notificar sobre nova mensagem recebida
-          notifyNewMessage(newMessage.senderName, newMessage.text);
-          
-          setMessages(prev => [...prev, newMessage]);
-          setTypingUser(null);
-          
-          // Avançar para próxima mensagem na sequência
-          currentIndex = (currentIndex + 1) % messageSequence.length;
-          
-        } catch (error) {
-          console.error('Erro ao adicionar mensagem simulada:', error);
-          setTypingUser(null);
-        }
-      }, 2000);
-    }, 5000);
+      if (messageIndexRef.current < additionalMessages.length) {
+        const currentMessage = additionalMessages[messageIndexRef.current];
+        console.log(`Simulando mensagem ${messageIndexRef.current + 1}/${additionalMessages.length}:`, currentMessage);
+        
+        // Mostrar indicador de digitação por 2 segundos
+        setTypingUser(currentMessage.author);
+        
+        setTimeout(async () => {
+          try {
+            const newApiMessage = await postMessage(currentMessage);
+            const newMessage = convertApiMessageToMessageType(newApiMessage);
+            
+            // Notificar sobre nova mensagem recebida
+            notifyNewMessage(newMessage.senderName, newMessage.text);
+            
+            setMessages(prev => [...prev, newMessage]);
+            setTypingUser(null);
+            
+            // Avançar para próxima mensagem
+            messageIndexRef.current++;
+            
+          } catch (error) {
+            console.error('Erro ao adicionar mensagem simulada:', error);
+            setTypingUser(null);
+          }
+        }, 2000);
+      }
+    }, 5000); // A cada 5 segundos conforme especificação
 
     // Cleanup function
     return () => {
@@ -109,7 +111,7 @@ export const useMessages = () => {
       }
       console.log('Limpando interval da simulação');
     };
-  }, [hasLoadedInitialMessages, notifyNewMessage]);
+  }, [hasLoadedInitialMessages, notifyNewMessage, setMessages]);
 
   const sendMessage = async (text: string) => {
     setIsLoading(true);
