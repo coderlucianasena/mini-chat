@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { getMessages, postMessage, ApiMessage, NewMessage } from '../services/mockApi';
 import { MessageType } from '../components/ChatApp';
@@ -18,6 +19,7 @@ export const useMessages = () => {
   const [messages, setMessages] = useLocalStorage<MessageType[]>('chat-messages', []);
   const [isLoading, setIsLoading] = useState(false);
   const [hasLoadedInitialMessages, setHasLoadedInitialMessages] = useState(false);
+  const [typingUser, setTypingUser] = useState<string | null>(null);
 
   const { notifyNewMessage } = useNotifications();
 
@@ -49,7 +51,7 @@ export const useMessages = () => {
     }
   }, [messages.length, hasLoadedInitialMessages, setMessages]);
 
-  // Simula chegada de novas mensagens a cada 5 segundos
+  // Simula chegada de novas mensagens a cada 8 segundos com indicador de digitação
   useEffect(() => {
     // Só inicia simulação após carregar mensagens iniciais
     if (!hasLoadedInitialMessages) return;
@@ -70,20 +72,28 @@ export const useMessages = () => {
     const interval = setInterval(async () => {
       if (messageIndex < simulatedMessages.length) {
         const messageToAdd = simulatedMessages[messageIndex];
-        try {
-          const newApiMessage = await postMessage(messageToAdd);
-          const newMessage = convertApiMessageToMessageType(newApiMessage);
-          
-          // Notificar sobre nova mensagem recebida
-          notifyNewMessage(newMessage.senderName, newMessage.text);
-          
-          setMessages(prev => [...prev, newMessage]);
-          messageIndex++;
-        } catch (error) {
-          console.error('Erro ao adicionar mensagem simulada:', error);
-        }
+        
+        // Mostrar indicador de digitação por 2 segundos
+        setTypingUser(messageToAdd.author);
+        
+        setTimeout(async () => {
+          try {
+            const newApiMessage = await postMessage(messageToAdd);
+            const newMessage = convertApiMessageToMessageType(newApiMessage);
+            
+            // Notificar sobre nova mensagem recebida
+            notifyNewMessage(newMessage.senderName, newMessage.text);
+            
+            setMessages(prev => [...prev, newMessage]);
+            setTypingUser(null); // Remover indicador de digitação
+            messageIndex++;
+          } catch (error) {
+            console.error('Erro ao adicionar mensagem simulada:', error);
+            setTypingUser(null);
+          }
+        }, 2000); // 2 segundos de digitação
       }
-    }, 5000); // A cada 5 segundos
+    }, 8000); // A cada 8 segundos
 
     return () => clearInterval(interval);
   }, [hasLoadedInitialMessages, setMessages, notifyNewMessage]);
@@ -104,6 +114,7 @@ export const useMessages = () => {
   return {
     messages,
     sendMessage,
-    isLoading
+    isLoading,
+    typingUser
   };
 };

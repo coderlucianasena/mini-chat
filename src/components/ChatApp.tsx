@@ -1,7 +1,9 @@
+
 import React, { useRef, useEffect } from 'react';
 import Message from './Message';
 import MessageInput from './MessageInput';
 import NotificationStatus from './NotificationStatus';
+import TypingIndicator from './TypingIndicator';
 import { useMessages } from '../hooks/useMessages';
 
 export interface MessageType {
@@ -13,7 +15,7 @@ export interface MessageType {
 }
 
 const ChatApp = () => {
-  const { messages, sendMessage, isLoading } = useMessages();
+  const { messages, sendMessage, isLoading, typingUser } = useMessages();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -22,7 +24,7 @@ const ChatApp = () => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, typingUser]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center p-4">
@@ -58,6 +60,9 @@ const ChatApp = () => {
                     message={message}
                   />
                 ))}
+                {typingUser && (
+                  <TypingIndicator userName={typingUser} />
+                )}
                 <div ref={messagesEndRef} />
               </>
             )}
