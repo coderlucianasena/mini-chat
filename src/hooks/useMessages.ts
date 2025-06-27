@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { getMessages, postMessage, ApiMessage, NewMessage } from '../services/mockApi';
 import { MessageType } from '../components/ChatApp';
 import { useNotifications } from './useNotifications';
+import { useAudio } from './useAudio';
 
 // Função para converter ApiMessage para MessageType
 const convertApiMessageToMessageType = (apiMessage: ApiMessage): MessageType => ({
@@ -24,6 +25,7 @@ export const useMessages = (userName?: string) => {
   const initialMessagesIndexRef = useRef(0);
 
   const { notifyNewMessage } = useNotifications();
+  const { playSendSound } = useAudio();
 
   // Lista de mensagens iniciais que serão carregadas uma por vez
   const initialMessages = [
@@ -164,6 +166,10 @@ export const useMessages = (userName?: string) => {
   const sendMessage = async (text: string) => {
     setIsLoading(true);
     setUserTyping(false);
+    
+    // Reproduz som de envio
+    playSendSound();
+    
     try {
       const newApiMessage = await postMessage({ author: 'Você', text });
       const newMessage = convertApiMessageToMessageType(newApiMessage);
