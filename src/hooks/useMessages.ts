@@ -51,20 +51,26 @@ export const useMessages = () => {
     }
   }, [messages.length, hasLoadedInitialMessages, setMessages]);
 
-  // Simula chegada de novas mensagens a cada 8 segundos com indicador de digitação
+  // Simula chegada de novas mensagens a cada 10 segundos com indicador de digitação
   useEffect(() => {
     // Só inicia simulação após carregar mensagens iniciais
     if (!hasLoadedInitialMessages) return;
 
     const simulatedMessages = [
-      { author: "Ana", text: "Que legal esse chat!" },
+      { author: "Ana Clara", text: "Que legal esse chat!" },
       { author: "Pedro", text: "Estou gostando da interface!" },
       { author: "Carlos", text: "Como vocês estão hoje?" },
+      { author: "Ana Clara", text: "Estou bem! E vocês?" },
       { author: "Lucia", text: "Esse chat está funcionando bem!" },
+      { author: "Pedro", text: "Concordo, muito bom mesmo!" },
       { author: "Roberto", text: "Boa tarde pessoal! 🌅" },
       { author: "Fernanda", text: "Alguém sabe que horas são?" },
+      { author: "Carlos", text: "São 15:30 aqui!" },
       { author: "Diego", text: "Adorei o design deste chat!" },
-      { author: "Camila", text: "Vamos conversar mais! 💬" }
+      { author: "Lucia", text: "Também gostei muito!" },
+      { author: "Camila", text: "Vamos conversar mais! 💬" },
+      { author: "Roberto", text: "Claro! Sempre bom bater papo" },
+      { author: "Ana Clara", text: "Que bom ter vocês aqui!" }
     ];
 
     let messageIndex = 0;
@@ -93,7 +99,7 @@ export const useMessages = () => {
           }
         }, 2000); // 2 segundos de digitação
       }
-    }, 8000); // A cada 8 segundos
+    }, 10000); // A cada 10 segundos
 
     return () => clearInterval(interval);
   }, [hasLoadedInitialMessages, setMessages, notifyNewMessage]);
