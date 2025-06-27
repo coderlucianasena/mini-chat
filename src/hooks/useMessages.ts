@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { getMessages, postMessage, ApiMessage, NewMessage } from '../services/mockApi';
 import { MessageType } from '../components/ChatApp';
 import { useLocalStorage } from './useLocalStorage';
@@ -20,6 +20,10 @@ export const useMessages = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasLoadedInitialMessages, setHasLoadedInitialMessages] = useState(false);
   const [typingUser, setTypingUser] = useState<string | null>(null);
+  
+  // Ref para controlar se a simulação já está rodando
+  const simulationRunningRef = useRef(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const { notifyNewMessage } = useNotifications();
 
@@ -53,8 +57,11 @@ export const useMessages = () => {
 
   // Simula chegada de novas mensagens seguindo a sequência: João → Maria → João → Ana
   useEffect(() => {
-    // Só inicia simulação após carregar mensagens iniciais
-    if (!hasLoadedInitialMessages) return;
+    // Só inicia simulação após carregar mensagens iniciais e se não estiver rodando
+    if (!hasLoadedInitialMessages || simulationRunningRef.current) return;
+
+    // Marcar que a simulação está rodando
+    simulationRunningRef.current = true;
 
     // Sequência exata conforme especificação: João → Maria → João → Ana
     const messageSequence = [
@@ -65,9 +72,9 @@ export const useMessages = () => {
     ];
 
     let currentIndex = 0;
-    console.log('Iniciando simulação com sequência:', messageSequence);
+    console.log('Iniciando simulação única com sequência:', messageSequence);
 
-    const interval = setInterval(async () => {
+    intervalRef.current = setInterval(async () => {
       const currentMessage = messageSequence[currentIndex];
       console.log(`Enviando mensagem ${currentIndex + 1}/4:`, currentMessage);
       
@@ -100,7 +107,15 @@ export const useMessages = () => {
       }, 2000); // 2 segundos de digitação
     }, 5000); // A cada 5 segundos conforme especificação
 
-    return () => clearInterval(interval);
+    // Cleanup function para limpar o interval
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      simulationRunningRef.current = false;
+      console.log('Limpando interval da simulação');
+    };
   }, [hasLoadedInitialMessages, setMessages, notifyNewMessage]);
 
   const sendMessage = async (text: string) => {
