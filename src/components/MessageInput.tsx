@@ -25,31 +25,27 @@ const MessageInput = ({ onSendMessage }: MessageInputProps) => {
   };
 
   return (
-    <div className="bg-white border-t border-gray-200 p-4">
-      <form onSubmit={handleSubmit} className="flex items-center space-x-3">
-        <div className="flex-1 relative">
-          <input
-            type="text"
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Digite sua mensagem..."
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-          />
-        </div>
-        <button
-          type="submit"
-          disabled={!inputText.trim()}
-          className={`p-3 rounded-full transition-all duration-200 ${
-            inputText.trim()
-              ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:from-blue-600 hover:to-indigo-700 shadow-lg hover:shadow-xl transform hover:scale-105'
-              : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-          }`}
-        >
-          <Send size={20} />
-        </button>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit} className="flex items-center space-x-2">
+      <input
+        type="text"
+        value={inputText}
+        onChange={(e) => setInputText(e.target.value)}
+        onKeyPress={handleKeyPress}
+        placeholder="Digite sua mensagem..."
+        className="flex-1 px-4 py-3 bg-gray-50 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-sm"
+      />
+      <button
+        type="submit"
+        disabled={!inputText.trim()}
+        className={`p-3 rounded-full transition-all duration-200 ${
+          inputText.trim()
+            ? 'bg-indigo-500 text-white hover:bg-indigo-600 shadow-md hover:shadow-lg'
+            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+        }`}
+      >
+        <Send size={18} />
+      </button>
+    </form>
   );
 };
 

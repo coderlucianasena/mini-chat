@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Send } from 'lucide-react';
 import Message from './Message';
@@ -15,38 +16,24 @@ const ChatApp = () => {
   const [messages, setMessages] = useState<MessageType[]>([
     {
       id: 1,
-      text: "Olá! Como você está hoje?",
+      text: "Olá! Bem-vindo ao Mini Chat! 👋",
       sender: 'other',
-      timestamp: new Date(Date.now() - 300000), // 5 minutos atrás
-      senderName: "Ana"
+      timestamp: new Date(Date.now() - 180000),
+      senderName: "Sistema"
     },
     {
       id: 2,
-      text: "Oi Ana! Estou bem, obrigado por perguntar 😊",
-      sender: 'user',
-      timestamp: new Date(Date.now() - 240000), // 4 minutos atrás
-      senderName: "Você"
+      text: "Esta é uma aplicação de chat desenvolvida em React!",
+      sender: 'other',
+      timestamp: new Date(Date.now() - 120000),
+      senderName: "Sistema"
     },
     {
       id: 3,
-      text: "Que bom! Você viu as novidades do projeto?",
+      text: "Você pode começar a conversar digitando uma mensagem abaixo.",
       sender: 'other',
-      timestamp: new Date(Date.now() - 180000), // 3 minutos atrás
-      senderName: "Ana"
-    },
-    {
-      id: 4,
-      text: "Ainda não tive tempo de ver. Pode me contar?",
-      sender: 'user',
-      timestamp: new Date(Date.now() - 120000), // 2 minutos atrás
-      senderName: "Você"
-    },
-    {
-      id: 5,
-      text: "Claro! Implementamos uma nova funcionalidade de chat em tempo real. Ficou incrível! 🚀",
-      sender: 'other',
-      timestamp: new Date(Date.now() - 60000), // 1 minuto atrás
-      senderName: "Ana"
+      timestamp: new Date(Date.now() - 60000),
+      senderName: "Sistema"
     }
   ]);
 
@@ -88,7 +75,7 @@ const ChatApp = () => {
         text: randomResponse,
         sender: 'other',
         timestamp: new Date(),
-        senderName: "Ana"
+        senderName: "Sistema"
       };
 
       setMessages(prev => [...prev, autoMessage]);
@@ -96,23 +83,23 @@ const ChatApp = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-md mx-auto h-[600px] bg-white rounded-lg shadow-xl overflow-hidden flex flex-col">
-        {/* Header */}
-        <div className="bg-white shadow-lg border-b border-gray-200 p-4">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
-              <span className="text-white font-semibold text-sm">AC</span>
-            </div>
-            <div>
-              <h1 className="text-lg font-semibold text-gray-800">Ana Clara</h1>
-              <p className="text-sm text-green-500">Online</p>
-            </div>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 flex flex-col items-center justify-center p-4">
+      {/* Título principal */}
+      <div className="text-center mb-8">
+        <h1 className="text-4xl font-bold text-indigo-600 mb-2">Mini Chat</h1>
+        <p className="text-gray-600">Aplicação de chat em tempo real</p>
+      </div>
+
+      {/* Container do chat */}
+      <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden">
+        {/* Header do chat */}
+        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white p-4 rounded-t-2xl">
+          <h2 className="text-lg font-semibold">Chat Online</h2>
+          <p className="text-sm text-indigo-100">{messages.length} mensagens</p>
         </div>
 
-        {/* Messages Container */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {/* Área de mensagens */}
+        <div className="h-96 overflow-y-auto p-4 space-y-3 bg-gray-50">
           {messages.map((message, index) => (
             <Message 
               key={message.id} 
@@ -123,8 +110,10 @@ const ChatApp = () => {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Message Input */}
-        <MessageInput onSendMessage={handleSendMessage} />
+        {/* Input de mensagem */}
+        <div className="p-4 bg-white border-t border-gray-200">
+          <MessageInput onSendMessage={handleSendMessage} />
+        </div>
       </div>
     </div>
   );
