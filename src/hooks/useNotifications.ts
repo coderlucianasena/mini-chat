@@ -1,11 +1,14 @@
+
 import { useEffect, useState } from 'react';
 import { useLocalStorage } from './useLocalStorage';
 import { useAudio } from './useAudio';
+import { useSoundSettings } from './useSoundSettings';
 
 export const useNotifications = () => {
   const [permission, setPermission] = useState<NotificationPermission>('default');
   const [notificationsEnabled] = useLocalStorage<boolean>('notifications-enabled', true);
   const { playNotificationSound } = useAudio();
+  const { soundEnabled } = useSoundSettings();
 
   // Solicita permissão para notificações na inicialização
   useEffect(() => {
@@ -44,8 +47,8 @@ export const useNotifications = () => {
       });
     }
     
-    // Reproduz som de notificação se as notificações estiverem habilitadas
-    if (notificationsEnabled) {
+    // Reproduz som de notificação se as notificações E os sons estiverem habilitados
+    if (notificationsEnabled && soundEnabled) {
       await playNotificationSound();
     }
   };

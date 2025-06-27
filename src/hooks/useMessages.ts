@@ -3,6 +3,7 @@ import { getMessages, postMessage, ApiMessage, NewMessage } from '../services/mo
 import { MessageType } from '../components/ChatApp';
 import { useNotifications } from './useNotifications';
 import { useAudio } from './useAudio';
+import { useSoundSettings } from './useSoundSettings';
 
 // Função para converter ApiMessage para MessageType
 const convertApiMessageToMessageType = (apiMessage: ApiMessage): MessageType => ({
@@ -26,6 +27,7 @@ export const useMessages = (userName?: string) => {
 
   const { notifyNewMessage } = useNotifications();
   const { playSendSound } = useAudio();
+  const { soundEnabled } = useSoundSettings();
 
   // Lista de mensagens iniciais que serão carregadas uma por vez
   const initialMessages = [
@@ -167,8 +169,10 @@ export const useMessages = (userName?: string) => {
     setIsLoading(true);
     setUserTyping(false);
     
-    // Reproduz som de envio
-    await playSendSound();
+    // Reproduz som de envio apenas se o som estiver habilitado
+    if (soundEnabled) {
+      await playSendSound();
+    }
     
     try {
       const newApiMessage = await postMessage({ author: 'Você', text });
