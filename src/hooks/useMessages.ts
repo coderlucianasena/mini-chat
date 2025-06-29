@@ -1,9 +1,8 @@
+
 import { useState, useEffect, useRef } from 'react';
 import { getMessages, postMessage, ApiMessage, NewMessage } from '../services/mockApi';
 import { MessageType } from '../components/ChatApp';
 import { useNotifications } from './useNotifications';
-import { useAudio } from './useAudio';
-import { useSoundSettings } from './useSoundSettings';
 
 // Função para converter ApiMessage para MessageType
 const convertApiMessageToMessageType = (apiMessage: ApiMessage): MessageType => ({
@@ -26,8 +25,6 @@ export const useMessages = (userName?: string) => {
   const initialMessagesIndexRef = useRef(0);
 
   const { notifyNewMessage } = useNotifications();
-  const { playSendSound } = useAudio();
-  const { soundEnabled } = useSoundSettings();
 
   // Lista de mensagens iniciais que serão carregadas uma por vez
   const initialMessages = [
@@ -112,7 +109,7 @@ export const useMessages = (userName?: string) => {
         const newApiMessage = await postMessage(currentMessage);
         const newMessage = convertApiMessageToMessageType(newApiMessage);
         
-        // Notificar sobre nova mensagem recebida
+        // Notificar sobre nova mensagem recebida (apenas notificação visual, sem som)
         notifyNewMessage(newMessage.senderName, newMessage.text);
         
         setMessages(prev => [...prev, newMessage]);
@@ -168,11 +165,6 @@ export const useMessages = (userName?: string) => {
   const sendMessage = async (text: string) => {
     setIsLoading(true);
     setUserTyping(false);
-    
-    // Reproduz som de envio apenas se o som estiver habilitado
-    if (soundEnabled) {
-      await playSendSound();
-    }
     
     try {
       const newApiMessage = await postMessage({ author: 'Você', text });

@@ -1,14 +1,10 @@
 
 import { useEffect, useState } from 'react';
 import { useLocalStorage } from './useLocalStorage';
-import { useAudio } from './useAudio';
-import { useSoundSettings } from './useSoundSettings';
 
 export const useNotifications = () => {
   const [permission, setPermission] = useState<NotificationPermission>('default');
   const [notificationsEnabled] = useLocalStorage<boolean>('notifications-enabled', true);
-  const { playNotificationSound } = useAudio();
-  const { soundEnabled } = useSoundSettings();
 
   // Solicita permissão para notificações na inicialização
   useEffect(() => {
@@ -45,14 +41,6 @@ export const useNotifications = () => {
         tag: 'chat-message',
         requireInteraction: false
       });
-    }
-    
-    // Reproduz som de notificação APENAS se o som estiver habilitado
-    if (soundEnabled) {
-      console.log('Reproduzindo som de notificação (som habilitado)');
-      await playNotificationSound();
-    } else {
-      console.log('Som desabilitado - não reproduzindo som de notificação');
     }
   };
 
