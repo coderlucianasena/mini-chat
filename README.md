@@ -3,6 +3,8 @@
 
 Uma aplicação de chat moderna e responsiva construída com React, TypeScript e Tailwind CSS.
 
+> **Nota**: Este projeto foi desenvolvido como parte de um teste técnico para o processo seletivo da **Inovia Digital**.
+
 ## 🚀 Funcionalidades
 
 ### Interface de Usuário
