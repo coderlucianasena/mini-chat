@@ -38,7 +38,7 @@ const ChatApp = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-blue-900 dark:to-indigo-900 flex items-center justify-center p-4 transition-colors">
       {/* Container do chat */}
       <div className="w-full max-w-md mx-auto">
-        <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/20 h-[700px] flex flex-col overflow-hidden transition-colors">
+        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 h-[700px] flex flex-col overflow-hidden transition-colors">
           {/* Header do chat */}
           <ChatHeader 
             userName={userName} 
@@ -46,7 +46,7 @@ const ChatApp = () => {
           />
 
           {/* Área de mensagens */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-gray-50/50 to-white/80 dark:from-gray-800/50 dark:to-gray-900/80 transition-colors">
+          <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 transition-colors">
             {messages.length === 0 ? (
               <div className="text-center text-gray-500 dark:text-gray-400 py-12">
                 <div className="text-4xl mb-4">💬</div>
@@ -83,7 +83,7 @@ const ChatApp = () => {
           </div>
 
           {/* Input de mensagem */}
-          <div className="p-6 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-t border-gray-100/50 dark:border-gray-700/50 transition-colors">
+          <div className="p-6 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 transition-colors">
             <MessageInput 
               onSendMessage={sendMessage} 
               disabled={isLoading} 
