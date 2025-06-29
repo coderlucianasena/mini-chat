@@ -45,6 +45,7 @@ src/
 │   ├── ui/              # Componentes de interface (shadcn/ui)
 │   ├── ChatApp.tsx      # Componente principal do chat
 │   ├── ChatHeader.tsx   # Cabeçalho com controles
+│   ├── ChatFooter.tsx   # Rodapé com informações do desenvolvedor
 │   ├── Message.tsx      # Componente de mensagem
 │   ├── MessageInput.tsx # Input para envio de mensagens
 │   ├── TypingIndicator.tsx # Indicador de digitação
@@ -159,8 +160,8 @@ Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalh
 
 Para suporte e dúvidas:
 - Abra uma issue no GitHub
-- Contate através do Discord da comunidade Lovable
+- Entre em contato através do LinkedIn ou GitHub (links no rodapé da aplicação)
 
 ---
 
-Desenvolvido com ❤️ usando [Lovable](https://lovable.dev)
+Desenvolvido com ❤️ por [Luciana Sena](https://github.com/coderlucianasena) usando [Lovable](https://lovable.dev)
