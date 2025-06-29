@@ -152,16 +152,6 @@ npm run lint     # Executa linting do código
 4. Push para a branch (`git push origin feature/AmazingFeature`)
 5. Abra um Pull Request
 
-## 📄 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
-
-## 📞 Suporte
-
-Para suporte e dúvidas:
-- Abra uma issue no GitHub
-- Entre em contato através do LinkedIn ou GitHub (links no rodapé da aplicação)
-
 ---
 
 Desenvolvido com ❤️ por [Luciana Sena](https://github.com/coderlucianasena) usando [Lovable](https://lovable.dev)
