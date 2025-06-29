@@ -19,14 +19,12 @@ Uma aplicação de chat moderna e responsiva construída com React, TypeScript e
 
 ### Sistema de Notificações
 - **Notificações do Navegador**: Alertas quando a aba não está ativa
-- **Efeitos Sonoros**: Sons para notificações e envio de mensagens
-- **Controle de Som**: Toggle para ativar/desativar efeitos sonoros
 - **Permissões Inteligentes**: Solicita permissões conforme necessário
 
 ### Persistência de Dados
 - **LocalStorage**: Salva configurações do usuário localmente
 - **Sincronização**: Mantém dados sincronizados entre abas
-- **Configurações Persistentes**: Nome, tema e preferências de som
+- **Configurações Persistentes**: Nome, tema e preferências
 
 ## 🛠️ Tecnologias Utilizadas
 
@@ -52,11 +50,9 @@ src/
 │   ├── TypingIndicator.tsx # Indicador de digitação
 │   └── UserNameSetup.tsx # Tela de configuração do nome
 ├── hooks/               # Custom hooks
-│   ├── useAudio.ts      # Hook para efeitos sonoros
 │   ├── useLocalStorage.ts # Hook para persistência local
 │   ├── useMessages.ts   # Hook para gerenciar mensagens
 │   ├── useNotifications.ts # Hook para notificações
-│   ├── useSoundSettings.ts # Hook para configurações de som
 │   ├── useTheme.ts      # Hook para alternância de tema
 │   └── useUserName.ts   # Hook para gerenciar nome do usuário
 ├── services/            # Serviços externos
@@ -103,7 +99,6 @@ npm run lint     # Executa linting do código
 2. **Chat**: Envie mensagens usando o campo de texto na parte inferior
 3. **Configurações**: Use os botões no cabeçalho para:
    - Alternar entre modo claro/escuro
-   - Ativar/desativar sons
    - Trocar seu nome de usuário
 4. **Notificações**: Permita notificações para receber alertas quando a aba não estiver ativa
 
@@ -112,14 +107,11 @@ npm run lint     # Executa linting do código
 ### Hooks Customizados
 - **useMessages**: Gerencia estado das mensagens e simulação
 - **useNotifications**: Controla notificações do navegador
-- **useAudio**: Gera efeitos sonoros usando Web Audio API
 - **useTheme**: Gerencia alternância entre temas
 - **useLocalStorage**: Abstrai persistência no localStorage
-- **useSoundSettings**: Controla configurações de áudio
 - **useUserName**: Gerencia nome do usuário
 
 ### Recursos Avançados
-- **Web Audio API**: Para efeitos sonoros personalizados
 - **Notification API**: Para alertas do navegador
 - **LocalStorage**: Para persistência de dados
 - **CSS Grid/Flexbox**: Layout responsivo
