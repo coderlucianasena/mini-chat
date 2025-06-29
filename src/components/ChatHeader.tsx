@@ -1,9 +1,7 @@
 
 import React from 'react';
-import { Moon, Sun, Settings, Volume2, VolumeX } from 'lucide-react';
-import { Switch } from './ui/switch';
+import { Moon, Sun, Settings } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
-import { useSoundSettings } from '../hooks/useSoundSettings';
 
 interface ChatHeaderProps {
   userName: string;
@@ -12,7 +10,6 @@ interface ChatHeaderProps {
 
 const ChatHeader = ({ userName, onNameChange }: ChatHeaderProps) => {
   const { theme, toggleTheme, isDark } = useTheme();
-  const { soundEnabled, toggleSound } = useSoundSettings();
 
   return (
     <div className="bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-600 dark:to-indigo-700 px-6 py-4">
@@ -35,20 +32,6 @@ const ChatHeader = ({ userName, onNameChange }: ChatHeaderProps) => {
         </div>
 
         <div className="flex items-center gap-4">
-          {/* Toggle de Som */}
-          <div className="flex items-center gap-2">
-            {soundEnabled ? (
-              <Volume2 size={16} className="text-white" />
-            ) : (
-              <VolumeX size={16} className="text-white" />
-            )}
-            <Switch
-              checked={soundEnabled}
-              onCheckedChange={toggleSound}
-              className="data-[state=checked]:bg-white/30 data-[state=unchecked]:bg-white/10"
-            />
-          </div>
-
           {/* Toggle Dark/Light Mode */}
           <button
             onClick={toggleTheme}
