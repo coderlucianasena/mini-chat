@@ -49,7 +49,10 @@ export const useNotifications = () => {
     
     // Reproduz som de notificação APENAS se o som estiver habilitado
     if (soundEnabled) {
+      console.log('Reproduzindo som de notificação (som habilitado)');
       await playNotificationSound();
+    } else {
+      console.log('Som desabilitado - não reproduzindo som de notificação');
     }
   };
 
