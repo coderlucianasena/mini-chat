@@ -1,8 +1,8 @@
-
 import React, { useRef, useEffect } from 'react';
 import Message from './Message';
 import MessageInput from './MessageInput';
 import ChatHeader from './ChatHeader';
+import ChatFooter from './ChatFooter';
 import TypingIndicator from './TypingIndicator';
 import UserNameSetup from './UserNameSetup';
 import { useMessages } from '../hooks/useMessages';
@@ -97,6 +97,9 @@ const ChatApp = () => {
               </div>
             )}
           </div>
+
+          {/* Footer */}
+          <ChatFooter />
         </div>
       </div>
     </div>
