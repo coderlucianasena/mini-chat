@@ -47,8 +47,8 @@ export const useNotifications = () => {
       });
     }
     
-    // Reproduz som de notificação se as notificações E os sons estiverem habilitados
-    if (notificationsEnabled && soundEnabled) {
+    // Reproduz som de notificação APENAS se o som estiver habilitado
+    if (soundEnabled) {
       await playNotificationSound();
     }
   };
